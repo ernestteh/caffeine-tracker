@@ -221,6 +221,18 @@ function excelDateToISO(val){
   return String(val||'');
 }
 
+function excelTimeToHHMM(val){
+  if(!val||val==='') return '';
+  if(typeof val==='string'&&val.includes(':')) return val.slice(0,5);
+  if(typeof val==='number'){
+    const totalMins=Math.round(val*24*60);
+    const h=Math.floor(totalMins/60)%24;
+    const m=totalMins%60;
+    return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+  }
+  return String(val);
+}
+  
 function load(){
   try{
     const stored=localStorage.getItem(STORAGE_KEY);
