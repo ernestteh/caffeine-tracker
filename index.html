@@ -343,7 +343,7 @@ function importXLSX(input){
       const imported=rows.map((r,i)=>({
         id: Date.now()+i,
         date:    excelDateToISO(r['Date']||r['date']||''),
-        time:    String(r['Time_drank']||r['time']||''),
+        time:    excelTimeToHHMM(r['Time_drank']||r['time']||''),
         type:    String(r['Type']||r['type']||'Energy Drink'),
         brand:   String(r['Brand']||r['brand']||''),
         flavour: String(r['Flavour']||r['flavour']||''),
