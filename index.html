@@ -395,19 +395,18 @@ async function syncToSheets(silent){
   if(syncing) return;
   syncing=true; setSyncStatus('syncing','Syncing...');
   try{
-    const res=await fetch(SCRIPT_URL,{
-      method:'POST',
-      body:JSON.stringify({
-        action:'save_all',
-        userEmail: currentUser.email,
-        entries:entries.map(e=>({
-          Date:e.date,Time:e.time,Type:e.type,Brand:e.brand,
-          Flavour:e.flavour,Size_ml:e.size,Caffeine_per_100:e.per100,
-          Caffeine_total:e.total,Feeling:e.feeling
-        }))
-      })
-    });
-    const data=await res.json();
+    const payload = {
+      action:'save_all',
+      email: currentUser.email,
+      entries: JSON.stringify(entries.map(e=>({
+        Date:e.date,Time:e.time,Type:e.type,Brand:e.brand,
+        Flavour:e.flavour,Size_ml:e.size,Caffeine_per_100:e.per100,
+        Caffeine_total:e.total,Feeling:e.feeling
+      })))
+    };
+    const params = new URLSearchParams(payload);
+    const res = await fetch(SCRIPT_URL+'?'+params.toString());
+    const data = await res.json();
     if(data.ok){ setSyncStatus('synced','Synced'); if(!silent)showMsg('sync-msg','Synced to Google Sheets.','ok'); }
     else throw new Error(data.error||'Unknown error');
   }catch(err){ setSyncStatus('error','Sync failed'); if(!silent)showMsg('sync-msg','Sync failed: '+err.message,'err'); }
