@@ -347,26 +347,17 @@ window.addEventListener('load', ()=>{
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 function excelTimeToHHMM(val){
-  if(!val||val==='') return '';
-  // Google Sheets time comes back as "1899-12-30T09:00:00.000Z" — parse UTC directly
-  if(typeof val==='string'&&val.includes('1899-12-30')){
-    const t=val.split('T')[1]||'';
-    return t.slice(0,5);
+  if(!val||val===''||val==='-') return '';
+  // Handle "9:00 AM" / "6:30 PM" format from getDisplayValues
+  const ampm = val.match(/^(\d{1,2}):(\d{2})(?::[\d]+)?\s*(AM|PM)$/i);
+  if(ampm){
+    let h=parseInt(ampm[1]), m=ampm[2], period=ampm[3].toUpperCase();
+    if(period==='AM'&&h===12) h=0;
+    if(period==='PM'&&h!==12) h+=12;
+    return String(h).padStart(2,'0')+':'+m;
   }
-  // Already HH:MM string
-  if(typeof val==='string'&&/^\d{1,2}:\d{2}$/.test(val)){
-    const p=val.split(':');
-    return p[0].padStart(2,'0')+':'+p[1];
-  }
-  // Other ISO datetime — take time part as-is
-  if(typeof val==='string'&&val.includes('T')){
-    return val.split('T')[1].slice(0,5);
-  }
-  // Float (fraction of day)
-  if(typeof val==='number'){
-    const m=Math.round(val*24*60);
-    return String(Math.floor(m/60)%24).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
-  }
+  // Already HH:MM
+  if(/^\d{2}:\d{2}$/.test(val)) return val;
   return '';
 }
 
