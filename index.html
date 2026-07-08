@@ -308,7 +308,7 @@ let entries=[], charts={}, syncing=false;
 let currentUser=null; // {email, name, picture, idToken}
 
 // ── Google Sign-In ──────────────────────────────────────────────────────────
-function handleGoogleSignIn(response){
+window.handleGoogleSignIn = function handleGoogleSignIn(response){
   // Decode the JWT id_token (payload only, no verification needed client-side)
   const payload = JSON.parse(atob(response.credential.split('.')[1]));
   currentUser = {
@@ -351,7 +351,7 @@ function showApp(){
 }
 
 // Auto sign-in if user was previously signed in
-function triggerSignIn(){
+window.triggerSignIn = function triggerSignIn(){
   if(typeof google !== 'undefined' && google.accounts){
     google.accounts.id.prompt();
   }
